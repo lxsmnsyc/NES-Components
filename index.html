@@ -11,7 +11,7 @@
         <link href="https://unpkg.com/nes.css/css/nes.min.css" rel="stylesheet" />
     </head>
     <body>
-        <nes-container title="Buttons">
+        <nes-container label="Buttons">
             <nes-button>Normal</nes-button>
             <nes-button state='primary'>Primary</nes-button>
             <nes-button state='success'>Success</nes-button>
@@ -19,24 +19,49 @@
             <nes-button state='error'>Error</nes-button>
             <nes-button state='disabled'>Disabled</nes-button>
         </nes-container>
-        <nes-container title="Containers">
-            <nes-container title="Container.is-centered" is-centered>
+        <nes-container label="Containers">
+            <nes-container label="Container.centered" centered>
                     Good morning. Thou hast had a good night's sleep, I hope.
             </nes-container>
-            <nes-container title="Container.is-dark" is-dark>
+            <nes-container label="Container.dark" dark>
                     Good morning. Thou hast had a good night's sleep, I hope.
             </nes-container>
-            <nes-container title="Container.is-centered" is-rounded>
+            <nes-container label="Container.centered" rounded centered>
                     Good morning. Thou hast had a good night's sleep, I hope.
             </nes-container>
-            <nes-container title="Container.is-dark" is-rounded is-dark>
+            <nes-container label="Container.dark" rounded dark>
                     Good morning. Thou hast had a good night's sleep, I hope.
             </nes-container>
         </nes-container>
+        <nes-container label="Avatars">
+            <nes-avatar src="https://www.gravatar.com/avatar" size="small"></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" ></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" size="medium"></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" size="large"></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" size="small" rounded></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" rounded></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" size="medium" rounded></nes-avatar>
+            <nes-avatar src="https://www.gravatar.com/avatar" size="large" rounded></nes-avatar>
+        </nes-container>
+        <nes-container label="Form">
+            <nes-input title="Your name"></nes-input>
+            <nes-input id="test" title="state=success" state="success" placeholder="NES.css" inline></nes-input>
+            <nes-input title="state=warning" state="warning" placeholder="8bit.css" inline></nes-input>
+            <nes-input title="state=error" state="error" placeholder="awesome.css" inline></nes-input>
+        </nes-container>
+        <nes-container label="Progress">
+            <nes-progress value="90" max="100"></nes-progress>
+            <nes-progress state="primary" value="80" max="100"></nes-progress>
+            <nes-progress state="success" value="50" max="100"></nes-progress>
+            <nes-progress state="warning" value="30" max="100"></nes-progress>
+            <nes-progress state="error" value="10" max="100"></nes-progress>
+            <nes-progress state="pattern" value="50" max="100"></nes-progress>
+        </nes-container>
         <!-- Compiled and minified JavaScript -->
+        <script src='src/js/button.js'></script>
         <script src='src/js/container.js'></script>
         <script src='src/js/input-box.js'></script>
-        <script src='src/js/button.js'></script>
-        <script src='src/js/radio.js'></script>
+        <script src='src/js/avatar.js'></script>
+        <script src='src/js/progress.js'></script>
     </body>
 </html>

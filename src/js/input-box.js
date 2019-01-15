@@ -27,191 +27,166 @@
 {
     /**
      * 
-     * Input main attributes
+     *  Input main attributes
      * 
      */
-    const MAIN_ATTRIBUTES = ['autocomplete', 'autofocus', 'disabled', 'form', 'list', 'name', 'readonly', 'required', 'tabindex', 'type', 'value'];
+    const MAIN_ATTRIBUTES = [
+        'autocomplete', 'autofocus', 'disabled', 'form', 
+        'list', 'name', 'readonly', 'required', 
+        'tabindex', 'type', 'value'
+    ];
     /**
      * 
-     * Materialize specific attributes
+     *  Materialize specific attributes
      * 
      */
-    const NES_ATTRIBUTES = ['label', 'state', 'inline'];
+    const NES_ATTRIBUTES = ['title', 'state', 'inline'];
     /**
      * 
-     * Input type-specific attributes
+     *  Input type-specific attributes
      * 
      */
-    const INPUT_ATTRIBUTES = {
-        'date': ['max', 'min', 'step', 'pattern'],
-        'datetime-local': ['max', 'min', 'step', 'pattern'],
-        'email' : ['placeholder', 'maxLength', 'minLength', 'pattern', 'size', 'spellcheck', 'multiple'],
-        'month': ['max', 'min', 'step'],
-        'password': ['placeholder', 'maxLength', 'minLength', 'pattern', 'size'],
-        'number': ['placeholder', 'max', 'min', 'step'],
-        'search': ['placeholder', 'maxLength', 'minLength', 'pattern', 'size', 'spellcheck'],
-        'tel': ['placeholder', 'maxLength', 'minLength', 'pattern', 'size'],
-        'text': ['placeholder', 'maxLength', 'minLength', 'pattern', 'size', 'spellcheck'],
-        'time': ['max', 'min', 'step'],
-        'url': ['placeholder', 'maxLength', 'minLength', 'pattern', 'size', 'spellcheck'],
-        'week': ['max', 'min', 'step'],
-    };
-
+    const INPUT_ATTRIBUTES = [
+        'placeholder', 'maxLength', 'minLength', 'pattern', 
+        'size', 'spellcheck', 'multiple', 'max', 
+        'min', 'step'
+    ];
+    /**
+     * 
+     *  Allowed input types
+     * 
+     */
+    const INPUT_TYPES = [
+        'text', 'password', 'email', 'number', 
+        'date', 'datetime-local', 'week', 'month', 
+        'time', 'tel', 'url', 'search'
+    ];
+    /**
+     * 
+     *  Input States
+     * 
+     */
     const STATES = ['success', 'warning', 'error'];
-    class NESInputBox extends HTMLElement{
-        static get observedAttributes() {
+    /**
+     * 
+     *  Attributes for the input
+     * 
+     */
+    const ATTRIBUTES = [...MAIN_ATTRIBUTES, ...INPUT_ATTRIBUTES];
+    /**
+     * 
+     *  Event types
+     * 
+     */
+    const INPUT_EVENT_TYPES = [
+        'beforeinput', 'blur', 'focus', 'focusin', 
+        'focusout', 'input'
+    ];
+    /**
+     * 
+     *  Define custom element
+     * 
+     */
+    customElements.define('nes-input', class extends HTMLElement{
+        static get observedAttributes(){
             return [
-                /**
-                 * 
-                 * Input main attributes
-                 * 
-                 */
-                'autocomplete', 'autofocus', 'disabled', 'form', 'list', 'name', 'readonly', 'required', 'tabindex', 'type', 'value',
-                /**
-                 * 
-                 * Input type-specific attributes
-                 * 
-                 */
-                'placeholder', 'maxLength', 'minLength', 'pattern', 'size', 'spellcheck', 'multiple',
-                'max', 'min', 'step',
-                /**
-                 * 
-                 * NES
-                 * 
-                 */
-                'label', 'state'
+                ...MAIN_ATTRIBUTES, ...NES_ATTRIBUTES, ...INPUT_ATTRIBUTES
             ];
         }
-        /**
-         * 
-         *  Getters and setters
-         * 
-         */
-        get value(){
-            return this.querySelector('input').value;
-        }
 
-        set value(input){
-            this.querySelector('input').value = input;
-        }
-
-        get disabled(){
-            return this.hasAttribute('disabled');
-        }
-
-        set disabled(flag){
-            if(flag){
-                this.setAttribute('disabled', '');
-                this.querySelector('input').setAttribute('disabled', '');
-            } else {
-                this.removeAttribute('disabled');
-                this.querySelector('input').removeAttribute('disabled');
-            }
-        }
-        
         constructor(){
             super();
-
+            /**
+             * 
+             *  Get shadow dom
+             * 
+             */
             let shadow = this.attachShadow({mode: 'open'});
 
             /**
              * 
-             *  Material Input Box attributes
-             * 
-             */
-            let flags = {},
-                values = {};
-            for(let attrb of NES_ATTRIBUTES){
-                let flag = this.hasAttribute(attrb);
-                flags[attrb] = flag;
-                values[attrb] = flag ? this.getAttribute(attrb) : '';
-            }
-            /**
-             * 
-             *  Create material input box container
+             *  Create the wrapper element
              * 
              */
             let wrapper = document.createElement('div');
+            wrapper.setAttribute('class', 'nes-field' + (this.hasAttribute('inline') ? ' is-inline' : ''));
             /**
              * 
-             *  attach grid type 
-             * 
-             */
-            wrapper.setAttribute('class', 'nes-field' + (flags.inline ? ' is-inline' : ''));
-            
-            /**
-             * 
-             *  Input label
+             *  Create the label element
              * 
              */
             let label = document.createElement('label');
-            label.appendChild(document.createTextNode(flags.label ? values.label : ''));
-            wrapper.appendChild(label);
+            label.appendChild(document.createTextNode(this.hasAttribute('title') ? this.getAttribute('title') : ''));
             /**
              * 
-             *  Input Element
+             *  Create the input element
              * 
              */
             let input = document.createElement('input');
-
-            let styling = 'nes-input';
-            if(flags.state){
-                let state = values.state
-                switch(state){
-                    case 'success': case 'warning': case 'error':
-                        styling += ' is-' + state;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-            input.setAttribute('class', styling);
-
-            let inputType = this.hasAttribute('type') ? this.getAttribute('type') : 'text';
-            input.setAttribute('type', inputType);
-            if(flags['character-count']){
-                input.setAttribute('data-length', values['character-count']);
-            }
             /**
              * 
-             *  Attach attributes to the input element
-             * 
+             *  Copy parent attributes to input 
+             *
              */
-            for(let attrb of MAIN_ATTRIBUTES){
+            for(let attrb of ATTRIBUTES){
                 if(this.hasAttribute(attrb)){
                     input.setAttribute(attrb, this.getAttribute(attrb));
                 }
             }
             /**
              * 
-             *  Attach type-specific attributes
+             *  Make sure that the input type is an allowed type.
              * 
              */
-            for(let attrb of INPUT_ATTRIBUTES[inputType]){
-                if(this.hasAttribute(attrb)){
-                    input.setAttribute(attrb, this.getAttribute(attrb));
-                }
+            let defaultValue = this.getAttribute('type');
+            if(!INPUT_TYPES.includes(defaultValue)){
+                defaultValue = 'text';  
             }
-
-            wrapper.appendChild(input);
-
+            input.setAttribute('type', defaultValue);
             /**
              * 
-             * Finalize
+             *  Apply classes to input
              * 
              */
-            let style = document.createElement('style');
-
-            style.textContent = `
+            let base = 'nes-input';
+            if(this.hasAttribute('state')){
+                let state = this.getAttribute('state');
+                base +=  (STATES.includes(state) ? ' is-' + state : '');
+            }
+            input.setAttribute('class', base);
+            /**
+             * 
+             *  Create a listener that automatically adjusts
+             *  the element's value attribute whenever the 
+             *  input's value changes.
+             * 
+             */
+            input.addEventListener('change', e => { 
+                this.setAttribute('value', input.value);
+            });
+            /**
+             * 
+             *  Import styling
+             * 
+             */
+            let styling = `
+                @import url("https://unpkg.com/nes.css/css/nes.min.css"); 
                 @import url("https://fonts.googleapis.com/css?family=Press+Start+2P");
-                @import url("https://unpkg.com/nes.css/css/nes.min.css");
 
-                .nes-field > label{
+                .nes-field > label, .nes-field > input{
                     font-family: "Press Start 2P";
                 }
-            `;
-            
+            `
+            let style = document.createElement('style');
+            style.textContent = styling;
+
+            /**
+             * 
+             *  Build DOM Tree
+             * 
+             */
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
             shadow.appendChild(style);
             shadow.appendChild(wrapper);
         }
@@ -219,65 +194,60 @@
         connectedCallback(){
 
         }
+
         disconnectedCallback(){
 
         }
+
         adoptedCallback(){
 
         }
+
         attributeChangedCallback(name, oldValue, newValue){
             /**
              * 
-             * Check if the attribute to be changed must be applied to the input element
+             *  Check if the modified attribute is a valid attribute
+             *  for the input element
              * 
              */
-            if(MAIN_ATTRIBUTES.includes(name)){
-                if(this.hasAttribute(name)){
-                    this.shadowRoot.querySelector('input').setAttribute(name, newValue);
-                } else {
-                    this.shadowRoot.querySelector('input').removeAttribute(name);
-                }
-            } else {
+            if(ATTRIBUTES.includes(name)){
                 /**
                  * 
-                 *  Check if the attribute is a member attribute for type-specific inputs
+                 *  Apply the change
                  * 
                  */
-                for(let index of Object.entries(INPUT_ATTRIBUTES)){
-                    if(index.includes(name)){
-                        this.shadowRoot.querySelector('input').setAttribute(name, newValue);
-                        return;
-                    }
+                
+                if(newValue === null){
+                    this.shadowRoot.querySelector('input').removeAttribute(name);
+                } else {
+                    this.shadowRoot.querySelector('input').setAttribute(name, newValue);
+                }
+
+                if(name == 'value'){
+                    this.shadowRoot.querySelector('input').value = newValue;
+                }
+
+            } else if(NES_ATTRIBUTES.includes(name)){
+                /**
+                 * 
+                 *  Iterate attributes through switch
+                 * 
+                 */
+                switch(name){
+                    case 'inline':
+                        this.shadowRoot.querySelector('.nes-field').setAttribute('class', 'nes-field' + (newValue === null ? '' : ' is-inline'));
+                        break;
+                    case 'state':
+                        let state = newValue !== null ? newValue : '';
+                        this.shadowRoot.querySelector('.nes-input').setAttribute('class', 'nes-input' +  (STATES.includes(state) ? ' is-' + state : ''));
+                        break;
+                    case 'title':
+                        this.shadowRoot.querySelector('label').innerHTML = newValue;
+                        break;
+                    default:
+                        break;
                 }
             }
-            /**
-             * 
-             *  The attribute targets the style, change according to element.
-             * 
-             */
-            switch(name){
-                case 'label':
-                    this.shadowRoot.querySelector('label').innerHTML = newValue;
-                    break;
-                case 'state':
-                    styling = 'nes-input' + (STATES.includes(newValue) ? ' is-' + newValue : '');
-                    
-                    this.shadowRoot.querySelector('.nes-input').setAttribute('class', styling);
-                    break; 
-                case 'inline':
-                    styling = 'nes-field' + (this.hasAttribute('inline') ? ' is-inline' : '');
-                    this.shadowRoot.querySelector('.nes-field').setAttribute('class', styling);
-                    break;
-                default:
-                    break;
-            }
         }
-    }
-
-    /**
-     * 
-     *  Define custom element
-     * 
-     */
-    customElements.define('nes-input', NESInputBox);
+    });
 }

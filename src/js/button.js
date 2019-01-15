@@ -1,48 +1,100 @@
+/**
+ * 
+ *  MIT License
+ * 
+ *  Copyright (c) 2019 Alexis Munsayac
+ * 
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ * 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ * 
+ */
 {
+    /**
+     * 
+     *  Attributes to be passed on the button
+     * 
+     */
     const ATTRIBUTES = [
         'autofocus', 'disabled', 'form', 'formaction', 
         'formenctype', 'formmethod', 'formnovalidate', 'formtarget',
         'name', 'type', 'value'
     ];
-
+    /**
+     * 
+     *  Button states (styles)
+     * 
+     */
     const STATES = ['primary', 'success', 'warning', 'error', 'disabled'];
 
-    class NESButton extends HTMLElement{
+    customElements.define('nes-button', class extends HTMLElement{
         static get observedAttributes() {
-            return ['state', 'autofocus', 'disabled', 'form', 'formaction', 
-            'formenctype', 'formmethod', 'formnovalidate', 'formtarget',
-            'name', 'type', 'value'];
+            return [...ATTRIBUTES];
         }
 
         constructor(){
             super();
-
+            /**
+             * 
+             *  Create shadow dom
+             * 
+             */
             let shadow = this.attachShadow({mode: 'open'});
-
-            let flags = {}, values = {};
-
-            for(let attrb of ATTRIBUTES){
-                let flag = this.hasAttribute(attrb);
-                flags[attrb] = flag;
-                values[attrb] = flag ? this.getAttribute(attrb) : '';
-            }
-
+            /**
+             * 
+             *  Create button element
+             * 
+             */
             let button = document.createElement('button');
-
+            /**
+             * 
+             *  Check if the button has a state
+             * 
+             */
             let hasState = this.hasAttribute('state');
-
+            /**
+             * 
+             *  Get the current state
+             * 
+             */
             let state = hasState ? this.getAttribute('state') : '';
-
+            /**
+             * 
+             *  Apply the corresponding style
+             * 
+             */
             let styling = 'nes-btn';
             if(hasState && STATES.includes(state)){
                 styling += ' is-' + state;
             }
-
+            /**
+             * 
+             *  set the class
+             * 
+             */
             button.setAttribute('class', styling);
-
+            /**
+             * 
+             *  Clone attributes from the host
+             * 
+             */
             for(let attrb of ATTRIBUTES){
-                if(flags[attrb]){
-                    button.setAttribute(attrb, values[attrb]);
+                if(this.hasAttribute(attrb)){
+                    button.setAttribute(attrb, this.getAttribute(attrb));
                 }
             }
             button.appendChild(document.createTextNode(this.innerHTML));
@@ -61,7 +113,11 @@
                     font-family: "Press Start 2P";
                 }
             `;
-            
+            /**
+             * 
+             *  Build shadow
+             * 
+             */
             shadow.appendChild(style);
             shadow.appendChild(button);
         }
@@ -82,10 +138,13 @@
              * 
              */
             if(ATTRIBUTES.includes(name)){
-                if(this.hasAttribute(name)){
+                if(newValue !== null){
                     this.shadowRoot.querySelector('button').setAttribute(name, newValue);
                 } else {
                     this.shadowRoot.querySelector('button').removeAttribute(name);
+                }
+                if(name == 'value'){
+                    this.shadowRoot.querySelector('button').value = newValue;
                 }
             } else {
                 /**
@@ -102,7 +161,5 @@
                 this.shadowRoot.querySelector('button').setAttribute('class', styling);
             }
         }
-    }
-
-    customElements.define('nes-button', NESButton);
+    });
 }
