@@ -1,0 +1,30 @@
+{
+  "name": "nes-components",
+  "version": "1.0.0",
+  "description": "https://nostalgic-css.github.io/NES.css/ in Web Components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LXSMNSYC/NES-Components.git"
+  },
+  "author": "LXSMNSYC (alexis.munsayac@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LXSMNSYC/NES-Components/issues"
+  },
+  "homepage": "https://github.com/LXSMNSYC/NES-Components#readme",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.18.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
+    "webpack": "^4.35.0"
+  }
+}
